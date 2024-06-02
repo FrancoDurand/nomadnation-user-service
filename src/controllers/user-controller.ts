@@ -69,7 +69,7 @@ class UserController {
             const result = await UserController.repository.update(user);
 
             if (result) {
-                res.status(200).json({ message: "User updated", offer: user });
+                res.status(200).json({ message: "User updated", user: user });
             }
             else
                 res.status(400).json({ message: "User not updated" });
