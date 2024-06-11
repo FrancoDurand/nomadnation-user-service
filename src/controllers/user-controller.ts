@@ -100,6 +100,28 @@ class UserController {
             res.status(500).json({ message: 'Internal server error', error: e });
         }
     }
+
+    public static async login(req: Request, res: Response): Promise<void> {
+        try {
+            const user: IUser = req.body;
+
+            if (!user.email || !user.password) {
+                res.status(400).json({ message: 'Invalid user data' });
+                return;
+            }
+
+            const result = await UserController.repository.login(user);
+
+            if (result) {
+                res.status(200).json({ ...result });
+            }
+            else
+                res.status(400).json({ message: "Invalid user data" });
+        }
+        catch (e) {
+            res.status(500).json({ message: 'Internal server error', error: e });
+        }
+    }
 }
 
 export default UserController;
