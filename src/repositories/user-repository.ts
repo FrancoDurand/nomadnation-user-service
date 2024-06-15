@@ -54,7 +54,7 @@ class UserRepository implements IRepository<IUser> {
     async login(entity: IUser): Promise<IUser | null> {
         const db = await Database.connect();
         const users = await db.collection<IUser>(this.collection);
-        return await users.findOne({ email: entity.email, password: entity.password }, { projection: { _id: 1 } });
+        return await users.findOne({ email: entity.email, password: entity.password }, { projection: { _id: 1, name: 1, profilePic: 1 } });
     }
 }
 
