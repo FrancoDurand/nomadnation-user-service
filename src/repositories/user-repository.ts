@@ -10,6 +10,7 @@ class UserRepository implements IRepository<IUser> {
         const db = await Database.connect();
         const users = await db.collection<IUser>(this.collection);
         await users.insertOne(entity);
+        await Database.disconnect();
         return entity;
     }
 
@@ -25,6 +26,7 @@ class UserRepository implements IRepository<IUser> {
             { returnDocument: "after" }
         );
 
+        await Database.disconnect();
         return result;
     }
 
@@ -35,6 +37,7 @@ class UserRepository implements IRepository<IUser> {
             { _id: new ObjectId(entity._id) },
         );
 
+        await Database.disconnect();
         return result.deletedCount ? true : false;
     }
 
@@ -42,19 +45,28 @@ class UserRepository implements IRepository<IUser> {
     async findById(entity: IUser): Promise<IUser | null> {
         const db = await Database.connect();
         const users = await db.collection<IUser>(this.collection);
-        return await users.findOne({ _id: new ObjectId(entity._id) });
+        const foundUser = await users.findOne({ _id: new ObjectId(entity._id) });
+        await Database.disconnect();
+        return foundUser;
     }
 
     async findAll(): Promise<IUser[]> {
         const db = await Database.connect();
         const users = await db.collection<IUser>(this.collection);
-        return await users.find().toArray();
+        const allUsers = await users.find().toArray();
+        await Database.disconnect();
+        return allUsers;
     }
 
     async login(entity: IUser): Promise<IUser | null> {
         const db = await Database.connect();
         const users = await db.collection<IUser>(this.collection);
-        return await users.findOne({ email: entity.email, password: entity.password }, { projection: { _id: 1, name: 1, profilePic: 1 } });
+        const user = await users.findOne(
+            { email: entity.email, password: entity.password },
+            { projection: { _id: 1, name: 1, profilePic: 1 } }
+        );
+        await Database.disconnect();
+        return user;
     }
 }
 
